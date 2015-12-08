@@ -1,0 +1,20 @@
+{
+  "name": "silverstripe/gis",
+  "description": "Experimental GIS (geo-spatial) module for SilverStripe",
+  "type": "silverstripe-module",
+  "keywords": ["silverstripe", "gis", "spatial", "geospacial"],
+  "authors": [
+    {
+      "name": "Sam Minnée",
+      "email": "sam@silverstripe.com"
+    }
+  ],
+  "require": {
+    "silverstripe/framework": "^3.2.0"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  }
+}
