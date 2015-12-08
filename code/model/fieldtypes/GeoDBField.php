@@ -65,12 +65,14 @@ abstract class GeoDBField extends DBField implements CompositeDBField {
 			} else {
 				$this->value = $this->nullValue();
 			}
-		} else if ($value instanceof GeoDBField) {
+		} elseif ($value instanceof GeoDBField) {
 			$this->setAsWKT($value->WKT());
-		} else if(self::is_valid_wkt($value)) {
+		} elseif(self::is_valid_wkt($value)) {
 			$this->setAsWKT($value);
-		} else if(is_array($value) && $this->hasMethod('setAsArray')) {
+		} elseif(is_array($value) && $this->hasMethod('setAsArray')) {
 			$this->setAsArray($value);
+		} elseif(is_null($value)) {
+			$this->wkt = null;
 		} else {
 			user_error("{$this->class}::setValue() - Bad value " . var_export($value, true), E_USER_ERROR);
 		}
