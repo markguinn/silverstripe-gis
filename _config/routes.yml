@@ -1,0 +1,6 @@
+---
+Name: gis_routes
+---
+Director:
+  rules:
+#    'dev/tilerenderqueue/$Action/$ID': 'TileRenderQueue_Controller'

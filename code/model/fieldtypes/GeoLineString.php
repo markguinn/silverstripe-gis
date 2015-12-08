@@ -1,27 +1,27 @@
 <?php
 /**
  * GIS Polyline class.
- * 
+ *
  * @see http://dev.mysql.com/doc/refman/5.0/en/gis-class-polyline.html
  * @see http://www.opengis.org/docs/99-049.pdf
  * @see http://dev.mysql.com/doc/refman/5.0/en/gis-wkt-format.html
- * 
+ *
  * @package gis
  */
 class GeoLineString extends GeoDBField implements CompositeDBField {
-	
+
 	protected static $wkt_name = 'LINESTRING';
-	
+
 	function requireField() {
 		DB::requireField($this->tableName, $this->name, "linestring");
 	}
-	
+
 	public function compositeDatabaseFields() {
 		return array(
 			$this->name => "GeoLineString"
 		);
 	}
-	
+
 	/**
 	 * Set one or more points as an array,
 	 * containing numeric arrays for each point
@@ -32,7 +32,7 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 	 *   array(array(0,1),array(2,3),array(3,4),array(0,1))
 	 * );
 	 * </example>
-	 * 
+	 *
 	 * @param array $points
 	 */
 	public function setAsPoints($points) {
@@ -44,10 +44,10 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 		$wkt = implode(',',$pointsWKT);
 		$this->setAsWKT($this->stat('wkt_name') . "({$wkt})");
 	}
-	
+
 	function writeToManipulation(&$manipulation) {
-		if($this->hasValue()) {
-			$manipulation['fields'][$this->name] = $this->WKT();
+		if($this->hasGeoValue()) {
+			$manipulation['fields'][$this->name] = $this->formatWKTForManipulation();
 		} else {
 			$manipulation['fields'][$this->name] = $this->nullValue();
 		}
@@ -57,7 +57,7 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 	 * Parse WKT string into an array of points,
 	 * with each point being represented as a numeric array
 	 * with x/y or lng/lat.
-	 * 
+	 *
 	 * <example>
 	 *   array(0,1),array(2,3),array(3,4)
 	 * </example>
@@ -69,23 +69,23 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 
 		preg_match('/^LINESTRING\(([^\(]*)\)$/', $this->wkt, $wktMatches);
 		if(!$wktMatches) return false;
-		
+
 		preg_match_all('/([0-9.\-]+ [0-9.\-]+)/', $wktMatches[1], $coords);
 		foreach($coords[0] as $coord) {
 			// resolve x/y for each coordinate
 			$points[] = explode(' ', $coord);
 		}
-		
+
 		return $points;
 	}
-	
-	
+
+
 	public function toJSON() {
 		$polylineEncoder = new PolylineEncoder();
 		$arr = array();
 		$points = $this->getPoints();
 		foreach($points as $point) {
-			list($encodedPoints, $encodedLevels, $encodedLiteral) = $polylineEncoder->dpEncode($points); 
+			list($encodedPoints, $encodedLevels, $encodedLiteral) = $polylineEncoder->dpEncode($points);
 			$arr['points'] = $points;
 			$arr['encoded'] = array(
 				'points' =>  $encodedPoints,
@@ -94,10 +94,10 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 				'zoomFactor' => 2
 			);
 		}
-		
+
 		return Convert::raw2json($arr);
 	}
-	
+
 	public function toXML() {
 		$points = $this->getPoints();
 		$xml = "<$this->Name srid=\"" . Convert::raw2att($this->srid) . "\">";
@@ -107,13 +107,13 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 		}
 		$xml .= "</points>";
 		$xml .= "</$this->Name>";
-		
+
 		return $xml;
 	}
-	
+
 	public function debug() {
 		return $this->name . '(' . $this->wkt . ')';
 	}
-	
+
 }
 ?>
