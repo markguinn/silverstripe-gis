@@ -15,7 +15,7 @@ class GeoPolygon extends GeoDBField implements CompositeDBField {
 	protected static $wkt_name = 'POLYGON';
 
 	function requireField() {
-		DB::requireField($this->tableName, $this->name, "polygon");
+		$this->getGisAdapter()->requireField($this->tableName, $this->name, "POLYGON");
 	}
 
 	public function compositeDatabaseFields() {
@@ -60,14 +60,6 @@ class GeoPolygon extends GeoDBField implements CompositeDBField {
 		$this->setAsWKT($this->stat('wkt_name') . "({$wkt})");
 	}
 
-	function writeToManipulation(&$manipulation) {
-		if($this->hasGeoValue()) {
-			$manipulation['fields'][$this->name] = $this->formatWKTForManipulation();
-		} else {
-			$manipulation['fields'][$this->name] = $this->nullValue();
-		}
-	}
-
 	/**
 	 * Parse WKT string into an array of rings,
 	 * with each point being represented as a numeric array
@@ -109,9 +101,12 @@ class GeoPolygon extends GeoDBField implements CompositeDBField {
 	 * Determines if the passed string is in valid "Well-known Text" format.
 	 *
 	 * @param string $wktString
+	 * @param bool $stripGeomFromText [optional]
+	 * @return bool
 	 */
-	public static function is_valid_wkt($wktString) {
-		if(!is_string($wktString)) return false;
+	public static function is_valid_wkt($wktString, $stripGeomFromText = false) {
+		if (!is_string($wktString)) return false;
+		if ($stripGeomFromText) $wktString = preg_replace("/GeomFromText\\('(.*)'\\)\$/i","\\1",$wktString);
 		return preg_match('/^POLYGON\(([a-zA-Z0-9.,]*)\)$/', $wktString);
 	}
 

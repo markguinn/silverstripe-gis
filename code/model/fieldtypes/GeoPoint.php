@@ -48,7 +48,7 @@ class GeoPoint extends GeoDBField implements CompositeDBField {
 	}
 
 	function requireField() {
-		DB::requireField($this->tableName, $this->name, "point");
+		$this->getGisAdapter()->requireField($this->tableName, $this->name, "POINT");
 	}
 
 	public function compositeDatabaseFields() {
@@ -89,7 +89,7 @@ class GeoPoint extends GeoDBField implements CompositeDBField {
 	 */
 	function setAsWKT($wktString) {
 		preg_match('/^POINT\(([0-9.\-]+) ([0-9.\-]+)\)$/', $wktString, $matches);
-		if(!$matches) return false;
+		if(!$matches) return;
 
 		$this->x = (float)$matches[1];
 		$this->y = (float)$matches[2];
@@ -181,22 +181,17 @@ class GeoPoint extends GeoDBField implements CompositeDBField {
 		$this->isChanged = true;
 	}
 
-	function writeToManipulation(&$manipulation) {
-		if($this->hasGeoValue()) {
-			$manipulation['fields'][$this->name] = $this->formatWKTForManipulation();
-		} else {
-			$manipulation['fields'][$this->name] = $this->nullValue();
-		}
-	}
-
 	/**
 	 * Determines if the passed string is in valid "Well-known Text" format.
 	 *
 	 * @param string $wktString
-	 * @return boolean
+	 * @param bool $stripGeomFromText [optional]
+	 * @return bool
 	 */
-	public static function is_valid_wkt($wktString) {
-		return (is_string($wktString) && preg_match('/^POINT\(([0-9.\-]+) ([0-9.\-]+)\)$/', $wktString));
+	public static function is_valid_wkt($wktString, $stripGeomFromText = false) {
+		if (!is_string($wktString)) return false;
+		if ($stripGeomFromText) $wktString = preg_replace("/GeomFromText\\('(.*)'\\)\$/i","\\1",$wktString);
+		return preg_match('/^POINT\(([0-9.\-]+) ([0-9.\-]+)\)$/', $wktString);
 	}
 
 	function debug() {

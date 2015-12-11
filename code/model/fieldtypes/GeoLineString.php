@@ -13,7 +13,7 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 	protected static $wkt_name = 'LINESTRING';
 
 	function requireField() {
-		DB::requireField($this->tableName, $this->name, "linestring");
+		$this->getGisAdapter()->requireField($this->tableName, $this->name, "LINESTRING");
 	}
 
 	public function compositeDatabaseFields() {
@@ -43,14 +43,6 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 		}
 		$wkt = implode(',',$pointsWKT);
 		$this->setAsWKT($this->stat('wkt_name') . "({$wkt})");
-	}
-
-	function writeToManipulation(&$manipulation) {
-		if($this->hasGeoValue()) {
-			$manipulation['fields'][$this->name] = $this->formatWKTForManipulation();
-		} else {
-			$manipulation['fields'][$this->name] = $this->nullValue();
-		}
 	}
 
 	/**
@@ -116,4 +108,4 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 	}
 
 }
-?>
+
