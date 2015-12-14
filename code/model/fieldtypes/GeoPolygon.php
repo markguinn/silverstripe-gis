@@ -15,7 +15,7 @@ class GeoPolygon extends GeoDBField implements CompositeDBField {
 	protected static $wkt_name = 'POLYGON';
 
 	function requireField() {
-		$this->getGisAdapter()->requireField($this->tableName, $this->name, "POLYGON");
+		$this->getGisAdapter()->requireField($this->tableName, $this->name, "POLYGON", $this->getSRID());
 	}
 
 	public function compositeDatabaseFields() {

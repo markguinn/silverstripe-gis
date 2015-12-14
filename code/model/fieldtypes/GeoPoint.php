@@ -48,7 +48,7 @@ class GeoPoint extends GeoDBField implements CompositeDBField {
 	}
 
 	function requireField() {
-		$this->getGisAdapter()->requireField($this->tableName, $this->name, "POINT");
+		$this->getGisAdapter()->requireField($this->tableName, $this->name, "POINT", $this->getSRID());
 	}
 
 	public function compositeDatabaseFields() {

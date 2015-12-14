@@ -9,6 +9,16 @@
 class PostGisDatabaseAdapter extends GisDatabaseAdapter
 {
 	/**
+	 * @param SS_Database $connection
+	 */
+	public function __construct(SS_Database $connection) {
+		parent::__construct($connection);
+		/** @var PostgreSQLDatabase $connection */
+		$connection->setSchemaSearchPath( $connection->currentSchema(), 'postgis' );
+	}
+
+
+	/**
 	 * @param string $tableName
 	 * @param string $fieldName
 	 * @param string $type
@@ -19,6 +29,8 @@ class PostGisDatabaseAdapter extends GisDatabaseAdapter
 		if (!$this->isPostGisInstalled()) {
 			$this->installPostGis();
 		}
+
+		$srid = (int)$srid;
 
 		// Check if the field exists
 //		if (!$this->fieldExists($tableName, $fieldName)) {

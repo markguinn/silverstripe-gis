@@ -13,7 +13,7 @@ class GeoLineString extends GeoDBField implements CompositeDBField {
 	protected static $wkt_name = 'LINESTRING';
 
 	function requireField() {
-		$this->getGisAdapter()->requireField($this->tableName, $this->name, "LINESTRING");
+		$this->getGisAdapter()->requireField($this->tableName, $this->name, "LINESTRING", $this->getSRID());
 	}
 
 	public function compositeDatabaseFields() {
