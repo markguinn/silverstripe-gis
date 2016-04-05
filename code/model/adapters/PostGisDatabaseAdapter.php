@@ -38,7 +38,7 @@ class PostGisDatabaseAdapter extends GisDatabaseAdapter
 //			DB::get_schema()->alterationMessage("Added geometry column $fieldName of type $type");
 //		}
 
-		DB::require_field($tableName, $fieldName, "postgis.geometry($type, $srid)");
+		DB::require_field($tableName, $fieldName, "geometry($type, $srid)");
 	}
 
 
@@ -47,7 +47,7 @@ class PostGisDatabaseAdapter extends GisDatabaseAdapter
 	 * @param SS_Query|SQLQuery $query
 	 */
 	public function addFieldToQuery($fieldName, &$query) {
-		$query = $query->selectField("postgis.ST_AsText(\"{$fieldName}\")", "{$fieldName}_AsText");
+		$query = $query->selectField("ST_AsText(\"{$fieldName}\")", "{$fieldName}_AsText");
 	}
 
 
@@ -61,7 +61,7 @@ class PostGisDatabaseAdapter extends GisDatabaseAdapter
 		if (is_array($value) && isset($value[$key])) {
 			$wkt = $value[$key];
 			unset($value[$key]);
-			$key = 'postgis.ST_' . $key;
+			$key = 'ST_' . $key;
 			$value[$key] = $wkt;
 		}
 
@@ -84,7 +84,7 @@ class PostGisDatabaseAdapter extends GisDatabaseAdapter
 	protected function installPostGis() {
 		DB::query("CREATE SCHEMA postgis;");
 		DB::query("CREATE EXTENSION IF NOT EXISTS postgis;");
-		DB::query("ALTER EXTENSION postgis SET SCHEMA postgis");
+        //DB::query("ALTER EXTENSION postgis SET SCHEMA postgis");
 	}
 
 

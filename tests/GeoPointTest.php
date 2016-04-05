@@ -81,7 +81,7 @@ class GeoPointTest extends SapphireTest {
 		} elseif (DB::get_conn()->getDatabaseServer() == 'postgresql') {
 			$this->assertEquals(
 				"POINT(2 3)",
-				DB::query("SELECT postgis.ST_AsText(\"Point\") FROM \"GeoPointTest_Obj\" WHERE \"ID\" = $pointObj->ID")->value()
+				DB::query("SELECT ST_AsText(\"Point\") FROM \"GeoPointTest_Obj\" WHERE \"ID\" = $pointObj->ID")->value()
 			);
 		}
 	}
@@ -91,7 +91,7 @@ class GeoPointTest extends SapphireTest {
 		if (DB::get_conn()->getDatabaseServer() == 'mysql') {
 			DB::query("INSERT INTO GeoPointTest_Obj SET ID = 1, POINT = GeomFromText('POINT(1 5)')");
 		} elseif (DB::get_conn()->getDatabaseServer() == 'postgresql') {
-			DB::query("INSERT INTO \"GeoPointTest_Obj\" (\"ID\", \"Point\") VALUES (1, postgis.ST_GeomFromText('POINT(1 5)'))");
+			DB::query("INSERT INTO \"GeoPointTest_Obj\" (\"ID\", \"Point\") VALUES (1, ST_GeomFromText('POINT(1 5)'))");
 		}
 
 		$pointObj = DataObject::get_by_id("GeoPointTest_Obj", 1);
@@ -111,7 +111,7 @@ class GeoPointTest extends SapphireTest {
 		if (DB::get_conn()->getDatabaseServer() == 'mysql') {
 			$this->assertEquals("POINT(2 3)", DB::query("SELECT AsText(Point) FROM GeoPointTest_ChildObj2 WHERE ID = $pointObj->ID")->value());
 		} elseif (DB::get_conn()->getDatabaseServer() == 'postgresql') {
-			$this->assertEquals("POINT(2 3)", DB::query("SELECT postgis.ST_AsText(\"Point\") FROM \"GeoPointTest_ChildObj2\" WHERE \"ID\" = $pointObj->ID")->value());
+			$this->assertEquals("POINT(2 3)", DB::query("SELECT ST_AsText(\"Point\") FROM \"GeoPointTest_ChildObj2\" WHERE \"ID\" = $pointObj->ID")->value());
 		}
 	}
 
@@ -122,7 +122,7 @@ class GeoPointTest extends SapphireTest {
 			DB::query("INSERT INTO GeoPointTest_ChildObj2 SET ID = 1, Point = GeomFromText('POINT(1 5)')");
 		} elseif (DB::get_conn()->getDatabaseServer() == 'postgresql') {
 			DB::query("INSERT INTO \"GeoPointTest_BaseObj2\" (\"ClassName\",\"ID\") VALUES ('GeoPointTest_ChildObj2', 1)");
-			DB::query("INSERT INTO \"GeoPointTest_ChildObj2\" (\"ID\", \"Point\") VALUES (1, postgis.ST_GeomFromText('POINT(1 5)'))");
+			DB::query("INSERT INTO \"GeoPointTest_ChildObj2\" (\"ID\", \"Point\") VALUES (1, ST_GeomFromText('POINT(1 5)'))");
 		}
 
 		/* If you request the child object itself, then the point should be selected */
@@ -155,7 +155,7 @@ class GeoPointTest extends SapphireTest {
 			$this->assertEquals("POINT(3 4)", DB::query("SELECT AsText(Point) FROM GeoPointTest_Obj WHERE ID = $pointObj->ID")
 			                                    ->value());
 		} elseif (DB::get_conn()->getDatabaseServer() == 'postgresql') {
-			$this->assertEquals("POINT(3 4)", DB::query("SELECT postgis.ST_AsText(\"Point\") FROM \"GeoPointTest_Obj\" WHERE \"ID\" = $pointObj->ID")
+			$this->assertEquals("POINT(3 4)", DB::query("SELECT ST_AsText(\"Point\") FROM \"GeoPointTest_Obj\" WHERE \"ID\" = $pointObj->ID")
 			                                    ->value());
 		}
 	}

@@ -32,7 +32,7 @@ class GeoPolygonTest extends SapphireTest {
 		if (DB::get_conn()->getDatabaseServer() == 'mysql') {
 			DB::query("INSERT INTO GeoPolygonTest_Obj SET ID = 1, Polygon = GeomFromText('$this->testWKTString')");
 		} elseif (DB::get_conn()->getDatabaseServer() == 'postgresql') {
-			DB::query("INSERT INTO \"GeoPolygonTest_Obj\" (\"ID\", \"Polygon\") VALUES (1, postgis.ST_GeomFromText('$this->testWKTString'))");
+			DB::query("INSERT INTO \"GeoPolygonTest_Obj\" (\"ID\", \"Polygon\") VALUES (1, ST_GeomFromText('$this->testWKTString'))");
 		}
 
 		$obj = DataObject::get_by_id("GeoPolygonTest_Obj", 1);
@@ -56,7 +56,7 @@ class GeoPolygonTest extends SapphireTest {
 		if (DB::get_conn()->getDatabaseServer() == 'mysql') {
 			$this->assertEquals($this->testWKTString, DB::query("SELECT AsText(Polygon) FROM GeoPolygonTest_Obj WHERE ID = $obj->ID")->value());
 		} elseif (DB::get_conn()->getDatabaseServer() == 'postgresql') {
-			$this->assertEquals($this->testWKTString, DB::query("SELECT postgis.ST_AsText(\"Polygon\") FROM \"GeoPolygonTest_Obj\" WHERE \"ID\" = $obj->ID")->value());
+			$this->assertEquals($this->testWKTString, DB::query("SELECT ST_AsText(\"Polygon\") FROM \"GeoPolygonTest_Obj\" WHERE \"ID\" = $obj->ID")->value());
 		}
 	}
 
